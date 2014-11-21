@@ -1,4 +1,4 @@
 ejb
 ===
 
-Study about Enterprise Java Beans 3.1
+Study about Enterprise Java Beans 3.1.
