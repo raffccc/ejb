@@ -1,57 +1,72 @@
 package org.jboss.ejb3.examples.ch04;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import java.net.MalformedURLException;
+import java.util.logging.Logger;
 
-import junit.framework.TestCase;
+import javax.ejb.EJB;
 
-import org.jboss.ejb3.examples.ch04.firstejb.CalculatorCommonBusiness;
-import org.jboss.ejb3.examples.ch04.firstejb.NoInterfaceViewCalculatorBean;
-import org.junit.BeforeClass;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.ejb3.examples.ch04.firstejb.CalculatorBeanBase;
+import org.jboss.ejb3.examples.ch04.firstejb.CalculatorLocalBusiness;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+/**
+ * Integration tests for the CalculatorEJB exposing one
+ * business view
+ */
+@RunWith(Arquillian.class)
 public class CalculatorIntegrationTestCase {
 
-	/**
-	 * The JNDI Naming Context
-	 */
-	private static Context namingContext;
+	private static final Logger log = Logger.getLogger(CalculatorIntegrationTestCase.class.getName());
 	
 	/**
-	 * The EJB 3.1 no-interface view of the CalculatorEJB
+	 * The EJB 3.x local business view of the CalculatorEJB
 	 */
-	private static NoInterfaceViewCalculatorBean calc;
+	 @EJB(mappedName="java:app/firstejb/SimpleCalculatorBean")
+	private static CalculatorLocalBusiness calcLocalBusiness;
 	
 	/**
-	 * JNDI Name of the no-interface view
+	 * Delegate for ensuring that the obtained Calculators are working as expected
 	 */
-	private static final String JNDI_NAME_CALC =
-			"java:global/ejb/cap4/SimpleCalculatorBean";
+	private static CalculatorAssertionDelegate assertionDelegate;
 	
-	//Invoked by JUnit before any tests run
-	@BeforeClass
-	public static void obtainProxyReferences() throws Throwable {
-		//Create the naming context, using jndi.properties on the classpath
-		namingContext = new InitialContext();
+	/**
+	 * Define the deployment
+	 */
+	@Deployment
+	public static JavaArchive createDeployment() throws MalformedURLException {
+		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "firstejb.jar")
+				.addPackage(CalculatorBeanBase.class.getPackage())
+				.addClass(CalculatorAssertionDelegate.class);
 		
-		//Obtain the EJB 3.1 Business Reference
-		calc = (NoInterfaceViewCalculatorBean) namingContext.lookup(JNDI_NAME_CALC);
+		/*
+		 * If "true" is specified, acts as a shorthand for toString(Formatter) where the 
+		 * Formatters.VERBOSE is leveraged. Otherwise the Formatters.SIMPLE will be used 
+		 * (equivalent to toString()).
+		 */
+		log.info(archive.toString(true));
+		return archive;
+	}
+	
+	/**
+	 * Run once before any tests
+	 */
+	@Before
+	public void beforeClass() throws Throwable {
+		//Create Assertion Delegate
+		assertionDelegate = new CalculatorAssertionDelegate();
 	}
 	
 	@Test
 	public void testAddditionUsingBusinessReference() throws Throwable {
-		this.assertAdditionSucceeds(calc);
+		//Test
+		log.info("Testing EJB via business reference...");
+		assertionDelegate.assertAdditionSucceeds(calcLocalBusiness);
 	}
 	
-	private void assertAdditionSucceeds(CalculatorCommonBusiness calc) {
-		//Initialize
-		final int[] arguments = new int[] { 2,3,5 };
-		final int expectedSum = 10;
-		
-		//Add
-		final int actualSum = calc.add(arguments); //Real EJB Invocation!
-		
-		//Test
-		TestCase.assertEquals("Addition did not return the expected result", expectedSum, actualSum);
-	}
 }
