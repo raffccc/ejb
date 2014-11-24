@@ -60,7 +60,7 @@ public class EncryptionBean implements EncryptionLocalBusiness,	EncryptionRemote
 	 */
 	private static final String DEFAULT_ALGORITHM_CIPHER = "PBEWithMD5AndDES";
 
-	private static final String DEFAULT_PASPHRASE = "LocalTestingPassphrase";
+	private static final String DEFAULT_PASSPHRASE = "LocalTestingPassphrase";
 
 	private static final byte[] DEFAULT_SALT_CIPHERS = { (byte) 0xB4, (byte) 0xA2, (byte) 0x43, (byte) 0x89, (byte) 0x3E, (byte) 0xC5, 
 		(byte) 0x78, (byte) 0x53};
@@ -82,7 +82,7 @@ public class EncryptionBean implements EncryptionLocalBusiness,	EncryptionRemote
 	 * via @Resource annotation, it automatically injects the value
 	 * from the ejb-jar.xml
 	 */
-	@Resource
+	@Resource(name="messageDigestAlgorithm")
 	private String messageDigestAlgorithm;
 
 	/**
@@ -122,7 +122,7 @@ public class EncryptionBean implements EncryptionLocalBusiness,	EncryptionRemote
 		this.encryptionCipher = Cipher.getInstance(ciphersKey.getAlgorithm());
 		this.decryptionCipher = Cipher.getInstance(ciphersKey.getAlgorithm());
 		encryptionCipher.init(Cipher.ENCRYPT_MODE, ciphersKey, paramSpec);
-		encryptionCipher.init(Cipher.DECRYPT_MODE, ciphersKey, paramSpec);
+		decryptionCipher.init(Cipher.DECRYPT_MODE, ciphersKey, paramSpec);
 
 		log.info("Initialized encryption cipher: " + this.encryptionCipher);
 		log.info("Initialized decryption cipher: " + this.decryptionCipher);
@@ -256,7 +256,7 @@ public class EncryptionBean implements EncryptionLocalBusiness,	EncryptionRemote
 			//See if provided
 			if (passphrase == null) {
 				log.warning("No encryption passphrase has been supplied explicitly via an env-entry, falling back on the default...");
-				passphrase = DEFAULT_PASPHRASE;
+				passphrase = DEFAULT_PASSPHRASE;
 			}
 
 			//Set the passphrase to be used so we don't have to do this lazy init again
@@ -282,7 +282,7 @@ public class EncryptionBean implements EncryptionLocalBusiness,	EncryptionRemote
 	}
 	
 	private String getEnvironmentEntryAsString(final String envEntryName) {
-		//See if we hava a SessionContext
+		//See if we have a SessionContext
 		final SessionContext context = this.context;
 		if (context == null) {
 			log.warning("No SessionContext, bypassing request to obtain environment entry: " + envEntryName);
@@ -304,7 +304,7 @@ public class EncryptionBean implements EncryptionLocalBusiness,	EncryptionRemote
 		//Cast
 		String returnValue = null;
 		try {
-			returnValue = (String)returnValue;
+			returnValue = (String)lookupValue;
 		} catch (ClassCastException cce) {
 			throw new IllegalStateException("The specified environment entry, " + lookupValue + 
 					", was not able to be represented as a " + String.class.getName(), cce);

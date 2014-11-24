@@ -2,6 +2,8 @@ package org.jboss.ejb3.examples.ch05.encryption;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
@@ -10,10 +12,13 @@ import junit.framework.TestCase;
 
 import org.apache.commons.codec.BinaryEncoder;
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(Arquillian.class)
 public class EncryptionIntegrationTestCase extends EncryptionTestCaseSupport {
 	
 	private static final Logger log = Logger.getLogger(EncryptionIntegrationTestCase.class.getName());
@@ -21,7 +26,7 @@ public class EncryptionIntegrationTestCase extends EncryptionTestCaseSupport {
 	/**
 	 * The EJB 3.x local business view of the EncryptionEJB
 	 */
-	@EJB
+	@EJB(mappedName = "java:module/EncryptionEJB!org.jboss.ejb3.examples.ch05.encryption.EncryptionLocalBusiness")
 	private static EncryptionLocalBusiness encryptionLocalBusiness;
 	
 	/**
@@ -34,6 +39,7 @@ public class EncryptionIntegrationTestCase extends EncryptionTestCaseSupport {
 	public static JavaArchive createDeployment() throws MalformedURLException {
 		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "slsb.jar")
 				.addPackage(EncryptionBean.class.getPackage())
+				.addClass(EncryptionTestCaseSupport.class)
 				.addAsManifestResource(new URL(EncryptionIntegrationTestCase.class.getProtectionDomain().getCodeSource().getLocation(),
 						"../classes/META-INF/ejb-jar.xml"), "ejb-jar.xml")
 				.addPackages(true, BinaryEncoder.class.getPackage());
@@ -46,6 +52,19 @@ public class EncryptionIntegrationTestCase extends EncryptionTestCaseSupport {
 	public void testHashing() throws Throwable {
 		log.info("testHashing");
 		this.assertHashing(encryptionLocalBusiness);
+	}
+	
+	public void testAsyncHashing() throws Exception {
+		log.info("testAsyncHashing");
+		
+		final String input = "Async Hashing Input";
+		final Future<String> hashFuture = encryptionLocalBusiness.hashAsync(input);
+		final String hash = hashFuture.get(10, TimeUnit.SECONDS);
+		
+		log.info("Hash of \"" + input + "\": " + hash);
+		
+		TestCase.assertNotSame("The hash function had no effect upon the supplied input", input, hash);
+		TestCase.assertTrue("The comparison of the input to its hashed result failed", encryptionLocalBusiness.compare(hash, input));
 	}
 	
 	@Test

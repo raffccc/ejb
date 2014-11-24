@@ -34,11 +34,7 @@ public class EncryptionTestCaseSupport {
 		log.info("Encrypted result of \"" + input + "\": " + encrypted);
 		
 		TestCase.assertNotSame("The encryption function had no effect upon the supplied input", input, encrypted);
-		
-		//Get the round-trip result
-		final String roundTrip = service.decrypt(encrypted);
-		
-		TestCase.assertEquals("The comparison of the input to its encrypted result failed", input, roundTrip);
+		TestCase.assertEquals("The comparison of the input to its encrypted result failed", input, service.decrypt(encrypted));
 	}
 
 }

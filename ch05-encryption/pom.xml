@@ -46,4 +46,70 @@
 			<artifactId>arquillian-junit-container</artifactId>
 		</dependency>
 	</dependencies>
+	
+	<profiles>
+		<profile>
+
+			<!-- Declare the "Integration Test" Profile -->
+			<id>it</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+
+			<build>
+				<plugins>
+					<!-- Get AS and put into "target" -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack</id>
+								<phase>pre-integration-test</phase> <!-- So run before testing -->
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.jboss.as</groupId>
+											<artifactId>jboss-as-dist</artifactId>
+											<version>${version.org.jboss.as.7}</version>
+											<type>zip</type>
+											<overWrite>false</overWrite>
+											<outputDirectory>${project.build.directory}</outputDirectory>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Surefire -->
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<redirectTestOutputToFile>true</redirectTestOutputToFile>
+									<trimStackTrace>false</trimStackTrace>
+									<printSummary>true</printSummary>
+									<includes>
+										<include>**/*IntegrationTestCase.java</include>
+									</includes>
+									<forkMode>once</forkMode>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	
 </project>
