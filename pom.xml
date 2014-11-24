@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>ch04-firstejb</module>
+		<module>ch05-encryption</module>
 	</modules>
 
 	<properties>
