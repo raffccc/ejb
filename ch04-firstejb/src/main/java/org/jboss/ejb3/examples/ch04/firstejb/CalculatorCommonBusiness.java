@@ -1,5 +1,7 @@
 package org.jboss.ejb3.examples.ch04.firstejb;
 
+import javax.ejb.EJBContext;
+
 public interface CalculatorCommonBusiness {
 
 	/**
@@ -7,5 +9,7 @@ public interface CalculatorCommonBusiness {
 	 * @return The sum of all arguments
 	 */
 	int add(int... arguments);
+	
+	EJBContext getContext();
 	
 }

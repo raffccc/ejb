@@ -1,5 +1,8 @@
 package org.jboss.ejb3.examples.ch04.firstejb;
 
+import javax.annotation.Resource;
+import javax.ejb.EJBContext;
+
 /**
  * Common base to contains the logic and extend it to add our metadata
  * that will define the SLSB
@@ -20,5 +23,12 @@ public class CalculatorBeanBase implements CalculatorCommonBusiness {
 		
 		return result;
 	}
+	
+	@Resource  
+	private EJBContext context;  
+
+	public EJBContext getContext() {  
+		return context;  
+	}  
 
 }
