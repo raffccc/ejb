@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 
-import org.apache.openejb.client.LocalInitialContextFactory;
-import org.apache.openejb.loader.OpenEJBInstance;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.ejb3.examples.ch04.firstejb.CalculatorBeanBase;
@@ -86,9 +84,7 @@ public class MultiViewCalculatorIntegrationTestCase {
 	public static JavaArchive createDeployment() throws MalformedURLException {
 		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "firstejb.jar")
 				.addPackage(CalculatorBeanBase.class.getPackage())
-				.addClass(CalculatorAssertionDelegate.class)
-				.addPackage(LocalInitialContextFactory.class.getPackage())
-				.addPackage(OpenEJBInstance.class.getPackage());
+				.addClass(CalculatorAssertionDelegate.class);
 
 		/*
 		 * If "true" is specified, acts as a shorthand for toString(Formatter) where the 

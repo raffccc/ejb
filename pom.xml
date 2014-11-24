@@ -163,7 +163,7 @@
 				<scope>test</scope>
 				<version>${version.org.jboss.arquillian}</version>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>org.apache.xalan</groupId>
 				<artifactId>serializer</artifactId>
