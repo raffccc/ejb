@@ -16,6 +16,7 @@ import org.jboss.ejb3.examples.ch04.firstejb.CalculatorLocalBusiness;
 import org.jboss.ejb3.examples.ch04.firstejb.CalculatorLocalHome;
 import org.jboss.ejb3.examples.ch04.firstejb.CalculatorRemote;
 import org.jboss.ejb3.examples.ch04.firstejb.CalculatorRemoteBusiness;
+import org.jboss.ejb3.examples.ch04.firstejb.CalculatorRemoteHome;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
@@ -111,6 +112,10 @@ public class MultiViewCalculatorIntegrationTestCase {
 		final Object calcLocalHomeReference = namingContext.lookup(JNDI_NAME_CALC_LOCAL_HOME);
 		final CalculatorLocalHome calcLocalHome = (CalculatorLocalHome) calcLocalHomeReference;
 		calcLocal = calcLocalHome.create();
+		
+		final Object calcRemoteReference = namingContext.lookup(JNDI_NAME_CALC_REMOTE_HOME);
+		final CalculatorRemoteHome calcRemoteHome = (CalculatorRemoteHome) calcRemoteReference;
+		calcRemote = calcRemoteHome.create();
 	}
 	
 	/**
@@ -142,7 +147,19 @@ public class MultiViewCalculatorIntegrationTestCase {
 	@Test
 	public void testAdditionUsingLocalReference() throws Throwable {
 		//Teste
-		log.info("Testing local business reference...");
+		log.info("Testing local reference...");
 		assertionDelegate.assertAdditionSucceeds(calcLocal);
 	}
+	
+	/**
+	 * Ensures that the CalculatorEJB adds as expected,
+	 * using the EJB 2.x remote view
+	 */
+	@Test
+	public void testAdditionUsingRemoteReference() throws Throwable {
+		//Teste
+		log.info("Testing remote reference...");
+		assertionDelegate.assertAdditionSucceeds(calcRemote);
+	}
+	
 }
