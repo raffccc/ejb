@@ -23,12 +23,19 @@
 			<artifactId>rome-fetcher</artifactId>
 			<version>${version.rome_rome.fetcher}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.jboss.as</groupId>
 			<artifactId>jboss-as-spec-api</artifactId>
 			<type>pom</type>
 		</dependency>
+
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty</artifactId>
+			<version>6.1.26</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
