@@ -8,6 +8,10 @@ public class FileTransferException extends RuntimeException {
 		super();
 	}
 	
+	public FileTransferException(String message) {
+		super(message);
+	}
+	
 	public FileTransferException(String message, Throwable cause) {
 		super(message, cause);
 	}
