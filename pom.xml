@@ -65,7 +65,14 @@
 					<argLine>-ea</argLine>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>true</downloadJavadocs>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>
@@ -166,7 +173,7 @@
 				<scope>test</scope>
 				<version>${version.org.jboss.arquillian}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.apache.xalan</groupId>
 				<artifactId>serializer</artifactId>

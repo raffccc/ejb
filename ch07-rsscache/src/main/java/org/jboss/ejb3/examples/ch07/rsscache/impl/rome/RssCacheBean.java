@@ -26,7 +26,7 @@ import com.sun.syndication.io.FeedException;
 @Singleton
 @Startup
 @Local(RssCacheCommonBusiness.class)
-//This annotation isn't necesasry since Container Concurrency Management is the default
+//This annotation isn't necessary since Container Concurrency Management is the default
 @ConcurrencyManagement(ConcurrencyManagementType.CONTAINER)
 public class RssCacheBean implements RssCacheCommonBusiness {
 	
