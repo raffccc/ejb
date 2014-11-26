@@ -14,6 +14,7 @@
 		<module>ch04-firstejb</module>
 		<module>ch05-encryption</module>
 		<module>ch06-filetransfer</module>
+		<module>ch07-rsscache</module>
 	</modules>
 
 	<properties>

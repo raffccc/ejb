@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>org.jboss.ejb3.examples</groupId>
+		<artifactId>jboss-ejb3-examples-aggregator</artifactId>
+		<version>1.1.0-SNAPSHOT</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ch07-rsscache</artifactId>
+	<name>JBoss EJB 3.x Examples - Chapter 7: RssCache EJBs</name>
+	<description>Example to accompany O'Reilly "Enterprise Java Beans 6th Edition" Chapter 7</description>
+
+	<properties>
+		<version.rome_rome.fetcher>1.0</version.rome_rome.fetcher>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>rome</groupId>
+			<artifactId>rome-fetcher</artifactId>
+			<version>${version.rome_rome.fetcher}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.as</groupId>
+			<artifactId>jboss-as-spec-api</artifactId>
+			<type>pom</type>
+		</dependency>
+	</dependencies>
+
+</project>
