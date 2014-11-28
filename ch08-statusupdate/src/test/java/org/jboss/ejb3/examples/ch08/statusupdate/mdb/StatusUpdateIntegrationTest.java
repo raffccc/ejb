@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import twitter4j.Twitter;
 
 @RunWith(Arquillian.class)
-@RunAsClient
 public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 
 	private static final Logger log = Logger.getLogger(StatusUpdateIntegrationTest.class.getName());
@@ -42,7 +41,8 @@ public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 
 	private static final String JNDI_NAME_CONNECTION_FACTORY = "ConnectionFactory";
 
-	@Deployment
+	//Testable = false means that the test will run in client mode
+	@Deployment(testable=false)
 	public static JavaArchive getDeployment() {
 		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, NAME_MDB_ARCHIVE)
 				.addPackages(true, StatusUpdate.class.getPackage(), StatusUpdateBeanBase.class.getPackage())
