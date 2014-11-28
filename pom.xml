@@ -16,6 +16,7 @@
 		<module>ch06-filetransfer</module>
 		<module>ch07-rsscache</module>
 		<module>ch08-statusupdate</module>
+		<module>ch08-messagedestinationlink</module>
 	</modules>
 
 	<properties>
@@ -151,6 +152,13 @@
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${version.junit_junit}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.arquillian</groupId>
+				<artifactId>arquillian-bom</artifactId>
+				<version>1.1.5.Final</version>
+				<type>pom</type>
 			</dependency>
 
 			<dependency>
