@@ -41,6 +41,85 @@
 			<groupId>org.jboss.arquillian.junit</groupId>
 			<artifactId>arquillian-junit-container</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.openejb</groupId>
+			<artifactId>openejb-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.arquillian.container</groupId>
+			<artifactId>arquillian-openejb-embedded-3.1</artifactId>
+		</dependency>
 	</dependencies>
+
+	<build>
+
+		<plugins>
+
+			<!-- Surefire -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>test</goal>
+						</goals>
+						<configuration>
+							<additionalClasspathElements>
+								<additionalClasspathElement>${JBOSS_HOME}/client/jbossws-native-client.jar</additionalClasspathElement>
+								<additionalClasspathElement>${JBOSS_HOME}/server/default/deploy/jbossweb.sar</additionalClasspathElement>
+							</additionalClasspathElements>
+							<redirectTestOutputToFile>true</redirectTestOutputToFile>
+							<trimStackTrace>false</trimStackTrace>
+							<printSummary>true</printSummary>
+							<includes>
+								<include>**/*IntegrationTest.java</include>
+							</includes>
+							<forkMode>once</forkMode>
+							<argLine>-Xmx512m -XX:MaxPermSize=256m
+								-Djava.net.preferIPv4Stack=true
+								-Djava.util.logging.manager=org.jboss.logmanager.LogManager
+								-Djava.endorsed.dirs=${JBOSS_HOME}/lib/endorsed
+								-Djboss.home=${JBOSS_HOME}
+								-Djboss.boot.server.log.dir=${JBOSS_HOME}
+								-Dorg.jboss.reflect.spi.TypeInfoFactory=org.jboss.reflect.plugins.introspection.IntrospectionTypeInfoFactory</argLine>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<!-- Get AS and put into "target" -->
+					<execution>
+						<id>unpack</id>
+						<phase>pre-integration-test</phase> <!-- So run before testing -->
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.jboss.jbossas</groupId>
+									<artifactId>jboss-as-distribution</artifactId>
+									<version>${version.org.jboss.as.7}</version>
+									<type>zip</type>
+									<overWrite>false</overWrite>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
 
 </project>

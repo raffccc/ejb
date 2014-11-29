@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-import javax.ejb.MessageDrivenBean;
 
 import junit.framework.TestCase;
 
@@ -12,6 +11,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.ejb3.examples.ch08.messagedestinationlink.api.MessageDestinationLinkConstants;
 import org.jboss.ejb3.examples.ch08.messagedestinationlink.mdb.MessageDestinationLinkMdb;
+import org.jboss.ejb3.examples.ch08.messagedestinationlink.slsb.MessageSendingBean;
 import org.jboss.ejb3.examples.ch08.messagedestinationlink.slsb.MessageSendingBusiness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
@@ -24,15 +24,15 @@ public class MessageDestinationLinkIntegrationTest {
 	private static final Logger log = Logger.getLogger(MessageDestinationLinkIntegrationTest.class.getName());
 
 	private static final String NAME_MDB_ARCHIVE = "messageDestinationLink.jar";
-	private static final String QUEUE_DEPLOYMENT_NAME = "hornet-jms.xml";
+	private static final String QUEUE_DEPLOYMENT_NAME = "hornetq-jms.xml";
 
-	@EJB(name=MessageSendingBusiness.NAME_JNDI)
+	@EJB(mappedName="java:module/MessageSendingEJB!org.jboss.ejb3.examples.ch08.messagedestinationlink.slsb.MessageSendingBusiness")
 	private MessageSendingBusiness bean;
 
 	@Deployment
 	public static JavaArchive createDeployment() {
 		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, NAME_MDB_ARCHIVE)
-				.addClasses(MessageDestinationLinkConstants.class, MessageDestinationLinkMdb.class, MessageSendingBusiness.class, MessageDrivenBean.class)
+				.addClasses(MessageDestinationLinkConstants.class, MessageDestinationLinkMdb.class, MessageSendingBusiness.class, MessageSendingBean.class)
 				.addAsResource(QUEUE_DEPLOYMENT_NAME, "queues/" + QUEUE_DEPLOYMENT_NAME);
 
 		log.info("Deploying archive: " + archive.toString(true));

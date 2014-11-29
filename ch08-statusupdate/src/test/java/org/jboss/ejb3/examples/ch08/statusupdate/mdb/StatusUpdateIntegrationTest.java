@@ -11,21 +11,23 @@ import javax.jms.TopicPublisher;
 import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.ejb3.examples.ch08.statusupdate.api.StatusUpdate;
-import org.jboss.ejb3.examples.ch08.statusupdate.api.StatusUpdateConstants;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import twitter4j.Twitter;
+import twitter4j.auth.OAuthSupport;
 
 @RunWith(Arquillian.class)
+@RunAsClient
 public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 
 	private static final Logger log = Logger.getLogger(StatusUpdateIntegrationTest.class.getName());
@@ -38,25 +40,22 @@ public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 	private static final String NAME_RESOURCE_TOPIC_DEPLOYMENT = "hornetq-jms.xml";
 
 	private static Context NAMING_CONTEXT;
-
-	private static final String JNDI_NAME_CONNECTION_FACTORY = "ConnectionFactory";
-
-	//Testable = false means that the test will run in client mode
-	@Deployment(testable=false)
-	public static JavaArchive getDeployment() {
-		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, NAME_MDB_ARCHIVE)
-				.addPackages(true, StatusUpdate.class.getPackage(), StatusUpdateBeanBase.class.getPackage())
-				.addResource(NAME_RESOURCE_TOPIC_DEPLOYMENT);
-		log.info(archive.toString(true));
-		return archive;
+	
+	@Before
+	public void setNamingContext() throws NamingException {
+		NAMING_CONTEXT = new InitialContext();
 	}
 
-	/**
-	 * Creates and starts a new JBossAS Server Embedded withing this JVM
-	 */
-	@BeforeClass
-	public static void setNamingContext() throws Exception {
-		NAMING_CONTEXT = new InitialContext();
+	//Testable = false means that the test will run in client mode
+	@Deployment(testable = false)
+	public static JavaArchive getDeployment() {
+		final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, NAME_MDB_ARCHIVE)
+				.addPackage(StatusUpdate.class.getPackage())
+				.addClasses(TwitterUpdateBlockingTestMdb.class, EnvironmentSpecificTwitterClientUtil.class, SecurityActions.class, StatusUpdateBeanBase.class, TwitterUpdateMdb.class, StatusUpdateTestBase.class)
+				.addPackages(true, Twitter.class.getPackage(), OAuthSupport.class.getPackage())
+				.addAsResource(NAME_RESOURCE_TOPIC_DEPLOYMENT);
+		log.info(archive.toString(true));
+		return archive;
 	}
 
 	@Test
@@ -71,7 +70,7 @@ public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 
 		final StatusUpdate newStatus = this.getUniqueStatusUpdate();
 
-		//Publicsh the update to a JSM Topic(where it should be consumed by the MDB subscriber)
+		//Publish the update to a JSM Topic(where it should be consumed by the MDB subscriber)
 		this.publishStatusUpdateToTopic(newStatus);
 
 		/*
@@ -86,7 +85,7 @@ public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 			Thread.interrupted();
 			throw new RuntimeException("Thread was interrupted while waiting for MDB processing; should not happen in this test");
 		}
-		
+
 		log.info("MDB signaled it's done processing, so we can resume");
 		this.assertLastUpdateSentToTwitter(twitterClient, newStatus);
 	}
@@ -95,18 +94,18 @@ public class StatusUpdateIntegrationTest extends StatusUpdateTestBase {
 		if (status == null) {
 			throw new IllegalArgumentException("status must be provided");
 		}
-		
-		final Topic topic = (Topic) NAMING_CONTEXT.lookup(StatusUpdateConstants.JNDI_NAME_TOPIC_STATUSUPDATE);
-		final TopicConnectionFactory factory = (TopicConnectionFactory) NAMING_CONTEXT.lookup(JNDI_NAME_CONNECTION_FACTORY);
+
+		final TopicConnectionFactory factory = (TopicConnectionFactory) NAMING_CONTEXT.lookup("/ConnectionFactory");
+		final Topic topic = (Topic) NAMING_CONTEXT.lookup("/topic/StatusUpdate");
 		
 		final TopicConnection connection = factory.createTopicConnection();
 		final TopicSession sendSession = connection.createTopicSession(false, TopicSession.AUTO_ACKNOWLEDGE);
 		final TopicPublisher publisher = sendSession.createPublisher(topic);
-		
+
 		final Message message = sendSession.createObjectMessage(status);
 		publisher.publish(message);
 		log.info("Published message " + message + " with contents: " + status);
-		
+
 		sendSession.close();
 		connection.close();
 	}

@@ -3,19 +3,12 @@ package org.jboss.ejb3.examples.ch08.statusupdate.mdb;
 import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
 import javax.jms.MessageListener;
 
 import org.jboss.ejb3.examples.ch08.statusupdate.api.StatusUpdate;
-import org.jboss.ejb3.examples.ch08.statusupdate.api.StatusUpdateConstants;
 
 import twitter4j.Twitter;
 
-@MessageDriven(activationConfig={
-		@ActivationConfigProperty(propertyName="destinationType", propertyValue=StatusUpdateConstants.TYPE_DESTINATION_STATUSUPDATE),
-		@ActivationConfigProperty(propertyName="destination", propertyValue=StatusUpdateConstants.JNDI_NAME_TOPIC_STATUSUPDATE)
-	})
 public class TwitterUpdateMdb extends StatusUpdateBeanBase implements MessageListener {
 
 	private static final Logger log = Logger.getLogger(TwitterUpdateMdb.class.getName());

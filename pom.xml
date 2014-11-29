@@ -24,6 +24,7 @@
 		<version.org.jboss.as.7>7.1.1.Final</version.org.jboss.as.7>
 		<version.org.jboss.arquillian>1.0.0.CR7</version.org.jboss.arquillian>
 		<version.org.apache.openejb>3.1.4</version.org.apache.openejb>
+		<version.org.jboss.arquillian.container.openejb>1.0.0.Alpha5</version.org.jboss.arquillian.container.openejb>
 	</properties>
 
 	<repositories>
@@ -203,6 +204,13 @@
 				<groupId>org.apache.openejb</groupId>
 				<artifactId>openejb-core</artifactId>
 				<version>${version.org.apache.openejb}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.arquillian.container</groupId>
+				<artifactId>arquillian-openejb-embedded-3.1</artifactId>
+				<version>${version.org.jboss.arquillian.container.openejb}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

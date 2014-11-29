@@ -17,7 +17,7 @@ import javax.jms.TextMessage;
 import org.jboss.ejb3.examples.ch08.messagedestinationlink.api.MessageDestinationLinkConstants;
 
 @Stateless(name=MessageSendingBusiness.NAME_EJB)
-@Local(MessageSendingBean.class)
+@Local(MessageSendingBusiness.class)
 public class MessageSendingBean implements MessageSendingBusiness {
 
 	private static final Logger log = Logger.getLogger(MessageSendingBean.class.getName());
