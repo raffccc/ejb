@@ -50,10 +50,10 @@ public class SecureSchoolT {
 	 * Behind the scenes, Arquillian is using a default JNDI Context without any
 	 * login properties to inject the proxy into this target.
 	 */
-	@EJB(mappedName="java:module/SecureSchoolBean!org.jboss.ejb3.examples.ch15.secureschool.api.SecureSchoolLocalBusiness")
+	@EJB(mappedName="java:global/secureSchool/SecureSchoolBean!org.jboss.ejb3.examples.ch15.secureschool.api.SecureSchoolLocalBusiness")
 	private SecureSchoolLocalBusiness unauthenticatedSchool;
 
-	@EJB(mappedName="java:module/FireDepartmentBean!org.jboss.ejb3.examples.ch15.secureschool.api.FireDepartmentLocalBusiness")
+	@EJB(mappedName="java:global/secureSchool/FireDepartmentBean!org.jboss.ejb3.examples.ch15.secureschool.api.FireDepartmentLocalBusiness")
 	private FireDepartmentLocalBusiness fireDepartment;
 
 	@Deployment
