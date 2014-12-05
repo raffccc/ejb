@@ -3,6 +3,7 @@ package org.jboss.ejb3.examples.ch18.tuner;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
+import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 
 public class Channel2Restrictor {
@@ -11,6 +12,7 @@ public class Channel2Restrictor {
 
 	private static final String METHOD_NAME_GET_CHANNEL = TunerLocalBusiness.class.getMethods()[0].getName();
 
+	@AroundInvoke
 	public Object checkAccessibility(final InvocationContext context) throws Exception {
 		assert context != null : "Context was not specified";
 

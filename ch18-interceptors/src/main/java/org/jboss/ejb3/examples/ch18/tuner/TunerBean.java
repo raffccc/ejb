@@ -15,6 +15,7 @@ public class TunerBean implements TunerLocalBusiness {
 
 	private static final Logger log = Logger.getLogger(TunerBean.class.getName());
 
+	@Interceptors(Channel2Restrictor.class)
 	@Override
 	public InputStream getChannel(final int channel) throws IllegalArgumentException {
 		final InputStream stream;

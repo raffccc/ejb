@@ -52,13 +52,15 @@ public class InterceptorIntegrationTest {
 		TestCase.assertEquals("The invocation should have been intercepted", 1, CachingAuditor.getInvocations().size());
 	}
 	
-	@Test
+	@Test(expected = Channel2ClosedException.class)
 	public void testChannel2Restricted() throws Throwable {
 		Channel2AccessPolicy.setChannel2Permitted(false);
 		try {
-			bean.getChannel(2);
-		} catch (final EJBException e) {
-			throw e.getCause();
+			try {
+				bean.getChannel(2);
+			} catch (final EJBException e) {
+				throw e.getCause();
+			} 
 		} catch (final UndeclaredThrowableException ute) {
 			throw ute.getCause();
 		}

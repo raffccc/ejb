@@ -1,5 +1,8 @@
 package org.jboss.ejb3.examples.ch18.tuner;
 
+import javax.ejb.ApplicationException;
+
+@ApplicationException
 public class Channel2ClosedException extends Exception {
 
 	private static final long serialVersionUID = 1L;
