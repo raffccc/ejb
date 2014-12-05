@@ -20,6 +20,7 @@
 		<module>ch17-transactions</module>
 		<module>testsupport</module>
 		<module>ch18-interceptors</module>
+		<module>ch19-timer</module>
 	</modules>
 
 	<properties>
